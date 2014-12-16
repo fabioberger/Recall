@@ -1,1 +1,1 @@
-web: recall
+web: go run main.go
