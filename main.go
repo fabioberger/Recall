@@ -43,5 +43,5 @@ func main() {
 	router.HandleFunc("/check", reminders.Check).Methods("GET")
 
 	n.UseHandler(router)
-	n.Run(":" + config.Port)
+	n.Run(":" + os.Getenv("PORT"))
 }
