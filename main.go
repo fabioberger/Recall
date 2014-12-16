@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/albrow/negroni-json-recovery"
 	"github.com/codegangsta/negroni"
+	"github.com/fabioberger/recall/config"
 	"github.com/fabioberger/recall/controllers"
 	"github.com/fabioberger/recall/models"
 
@@ -27,10 +29,12 @@ func main() {
 
 	// Middleware
 	n := negroni.New(negroni.NewLogger())
+	n.Use(recovery.JSONRecovery(config.Env != "production"))
 
 	// Routes
 	router := mux.NewRouter()
 
+	config.Init()
 	models.Init()
 
 	reminders := controllers.Reminders{}
@@ -39,5 +43,5 @@ func main() {
 	router.HandleFunc("/check", reminders.Check).Methods("GET")
 
 	n.UseHandler(router)
-	n.Run(":3000")
+	n.Run(":" + config.Port)
 }

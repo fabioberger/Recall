@@ -4,8 +4,9 @@ import (
 	"database/sql"
 	"fmt"
 
+	"github.com/fabioberger/recall/config"
+
 	"github.com/coopernurse/gorp"
-	"github.com/fabioberger/golympus/config"
 	_ "github.com/lib/pq"
 )
 
@@ -15,7 +16,7 @@ func Init() {
 	// connect to postgres database
 	// TODO: use a password here if needed
 	fmt.Println("[database] Connecting to database...")
-	db, err := sql.Open("postgres", "dbname=recall sslmode=disable")
+	db, err := sql.Open(config.Database.Driver, config.Database.Open)
 	if err != nil {
 		panic(err)
 	}
