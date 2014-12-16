@@ -1,0 +1,54 @@
+{
+	"ImportPath": "github.com/fabioberger/recall",
+	"GoVersion": "go1.3",
+	"Deps": [
+		{
+			"ImportPath": "github.com/albrow/go-data-parser",
+			"Rev": "8df32796ea5c0f45bd7559ef1425e792a99bf609"
+		},
+		{
+			"ImportPath": "github.com/albrow/negroni-json-recovery",
+			"Rev": "b91295d78ffc4846db22f7ff8b8344705ed719d1"
+		},
+		{
+			"ImportPath": "github.com/codegangsta/negroni",
+			"Comment": "v0.1-27-g46bd821",
+			"Rev": "46bd821940d86fb9777f7f86e9ae428132e110da"
+		},
+		{
+			"ImportPath": "github.com/coopernurse/gorp",
+			"Comment": "v1.6.1",
+			"Rev": "31a7c02fabe8965c887cd243e381ce08328f3741"
+		},
+		{
+			"ImportPath": "github.com/gorilla/context",
+			"Rev": "14f550f51af52180c2eefed15e5fd18d63c0a64a"
+		},
+		{
+			"ImportPath": "github.com/gorilla/mux",
+			"Rev": "14cafe28513321476c73967a5a4f3454b6129c46"
+		},
+		{
+			"ImportPath": "github.com/lib/pq",
+			"Rev": "b021d0ef20de4f7ed239e2cbe3b95648d8e41e95"
+		},
+		{
+			"ImportPath": "github.com/sendgrid/sendgrid-go",
+			"Comment": "v1.1.0",
+			"Rev": "f099d401da3cad312bb015d7aa7d77ec0e3c1aeb"
+		},
+		{
+			"ImportPath": "github.com/sendgrid/smtpapi-go",
+			"Comment": "v0.2.1-7-gf898c6a",
+			"Rev": "f898c6a004fb8d48ef1ef3d0e64917c0522ead1c"
+		},
+		{
+			"ImportPath": "github.com/unrolled/render",
+			"Rev": "994e5643febaa5850ca44369bcd09e1f386ec64e"
+		},
+		{
+			"ImportPath": "gopkg.in/yaml.v1",
+			"Rev": "1b9791953ba4027efaeb728c7355e542a203be5e"
+		}
+	]
+}
