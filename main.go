@@ -1,78 +1,43 @@
 package main
 
 import (
-	"database/sql"
-	"log"
-	"net/http"
+	"flag"
+	"fmt"
+	"os"
 
-	"github.com/albrow/go-data-parser"
-	"github.com/codegangsta/martini-contrib/render"
-	"github.com/coopernurse/gorp"
-	"github.com/go-martini/martini"
+	"github.com/codegangsta/negroni"
+	"github.com/fabioberger/recall/controllers"
+	"github.com/fabioberger/recall/models"
+
+	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 )
 
-type Reminder struct {
-	Id       int    `db:"id"`
-	Reminder string `db:"reminder"`
-	Sent     int    `db:"sent"`
-}
+const version = "0.0.0"
 
-func initDb() *gorp.DbMap {
-	// connect to db using standard Go database/sql API
-	// use whatever database/sql driver you wish
-	db, err := sql.Open("postgres", "dbname=recall sslmode=disable")
-	checkErr(err, "sql.Open failed")
-
-	// construct a gorp DbMap
-	dbmap := &gorp.DbMap{Db: db, Dialect: gorp.PostgresDialect{}}
-
-	// add a table, setting the table name to 'posts' and
-	dbmap.AddTableWithName(Reminder{}, "reminders").SetKeys(true, "Id")
-
-	return dbmap
-}
-
-func checkErr(err error, msg string) {
-	if err != nil {
-		log.Fatalln(msg, err)
-	}
-}
+var versionFlag = flag.Bool("version", false, "If provided, server will print out the version number then immediately exit.")
 
 func main() {
-	m := martini.Classic()
-	m.Map(initDb())
-	m.Use(render.Renderer())
-
-	m.Get("/", showForm)
-	m.Post("/reminder", createReminder)
-	m.Run()
-}
-
-func createReminder(r render.Render, req *http.Request, db *gorp.DbMap) {
-	reminderData, err := data.Parse(req)
-	checkErr(err, "POST data parse error")
-
-	val := reminderData.Validator()
-	val.Require("reminder")
-	val.LengthRange("reminder", 3, 100)
-
-	reminder := Reminder{
-		Reminder: reminderData.Get("reminder"),
-		Sent:     0,
+	flag.Parse()
+	if *versionFlag {
+		// print out the version and immediately exit
+		fmt.Println(version)
+		os.Exit(0)
 	}
 
-	err = db.Insert(&reminder)
-	checkErr(err, "Inserting reminder failed")
+	// Middleware
+	n := negroni.New(negroni.NewLogger())
 
-	r.HTML(200, "index", "success")
+	// Routes
+	router := mux.NewRouter()
 
-}
+	models.Init()
 
-func showForm(r render.Render, db *gorp.DbMap) {
+	reminders := controllers.Reminders{}
+	router.HandleFunc("/", reminders.GetAll).Methods("GET")
+	router.HandleFunc("/reminder", reminders.Create).Methods("POST")
+	router.HandleFunc("/check", reminders.Check).Methods("GET")
 
-	var reminders []Reminder
-	_, err := db.Select(&reminders, "select * from reminders")
-	checkErr(err, "error selecting reminders")
-	r.HTML(200, "index", reminders)
+	n.UseHandler(router)
+	n.Run(":3000")
 }

@@ -12,7 +12,7 @@ DROP TABLE IF EXISTS "public"."reminders";
 CREATE TABLE "public"."reminders" (
 	"id" int4 NOT NULL DEFAULT nextval('reminders_id_seq'::regclass),
 	"reminder" varchar(255) NOT NULL COLLATE "default",
-	"sent" int NOT NULL
+	"timestamp" int NOT NULL
 )
 WITH (OIDS=FALSE);
 
@@ -20,7 +20,7 @@ WITH (OIDS=FALSE);
 --  Records of books
 -- ----------------------------
 BEGIN;
-INSERT INTO "public"."reminders" VALUES ('1', 'Crypto Course Week 1', 1);
+INSERT INTO "public"."reminders" VALUES ('1', 'Crypto Course Week 1', 1418684112);
 COMMIT;
 
 
