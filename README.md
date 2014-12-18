@@ -15,9 +15,13 @@ Environment Variables to set:
 Database Setup:
 - In psql:
 ```
+CREATE USER recall;
 CREATE DATABASE recall_dev;
+GRANT ALL PRIVILEGES ON DATABASE recall_dev TO recall;
 CREATE DATABASE recall_test;
+GRANT ALL PRIVILEGES ON DATABASE recall_test TO recall;
 CREATE DATABASE recall_prod;
+GRANT ALL PRIVILEGES ON DATABASE recall_prod TO recall;
 ```
 - goose --env=development up
 
