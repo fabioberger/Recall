@@ -86,8 +86,14 @@ func ParseDatabaseYAML(env string) {
 	envData := data[env]
 
 	// parse the env variable and set it properly
-	if strings.Contains(envData.Open, "$RECALL_PSQL_HOST") {
-		envData.Open = strings.Replace(envData.Open, "$RECALL_PSQL_HOST", os.Getenv("RECALL_PSQL_HOST"), -1)
+	if strings.Contains(envData.Open, "$POSTGRES_PORT_5432_TCP_ADDR") {
+		envData.Open = strings.Replace(envData.Open, "$POSTGRES_PORT_5432_TCP_ADDR", os.Getenv("POSTGRES_PORT_5432_TCP_ADDR"), -1)
+	}
+	if strings.Contains(envData.Open, "$POSTGRES_USER") {
+		envData.Open = strings.Replace(envData.Open, "$POSTGRES_USER", os.Getenv("POSTGRES_USER"), -1)
+	}
+	if strings.Contains(envData.Open, "$POSTGRES_PASSWORD") {
+		envData.Open = strings.Replace(envData.Open, "$POSTGRES_PASSWORD", os.Getenv("POSTGRES_PASSWORD"), -1)
 	}
 	fmt.Println("[database] Using psql paramaters:", envData.Open)
 

@@ -7,17 +7,17 @@ Environment Variables to set:
 	SENDGRID_KEY
 - Users email
 	GMAIL_ADDRESS
+- Postgres info
+	POSTGRES_PORT_5432_TCP_ADDR (localhost if local, already set if linked psql docker container, /var/run/postgresql on Ubuntu aws)
+	POSTGRES_USER
+	POSTGRES_PASSWORD
 
 Database Setup:
 - In psql:
 ```
-CREATE USER recall;
 CREATE DATABASE recall_dev;
-GRANT ALL PRIVILEGES ON DATABASE recall_dev TO recall;
 CREATE DATABASE recall_test;
-GRANT ALL PRIVILEGES ON DATABASE recall_test TO recall;
 CREATE DATABASE recall_prod;
-GRANT ALL PRIVILEGES ON DATABASE recall_prod TO recall;
 ```
 - goose --env=development up
 
