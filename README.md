@@ -23,7 +23,14 @@ GRANT ALL PRIVILEGES ON DATABASE recall_test TO recall;
 CREATE DATABASE recall_prod;
 GRANT ALL PRIVILEGES ON DATABASE recall_prod TO recall;
 ```
-- goose --env=development up
+- Edit pg_hba.conf:
+```psql -U postgres```
+```SHOW hba_file```
+```ctrl-d```
+```vi /var/lib/postgresql/data/pg_hba.conf```
+```host all "recall" 0.0.0.0/0 trust```
+
+- In recall docker: goose --env=development up
 
 Dependencies:
 - Negroni (go get github.com/codegangsta/negroni)
