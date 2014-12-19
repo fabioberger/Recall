@@ -3,12 +3,12 @@ production:
    # TODO: enable ssl when possible! It is okay for now because we're running the
    # database on the same server as our application, so there is no way for someone
    # to snoop.
-   open: host=$POSTGRES_PORT_5432_TCP_ADDR user=recall dbname=recall_prod sslmode=disable
+   open: host=$POSTGRES_PORT_5432_TCP_ADDR user=$POSTGRES_USER password=$POSTGRES_PASSWORD dbname=recall_prod sslmode=disable
 
 development:
    driver: postgres
-   open: host=$POSTGRES_PORT_5432_TCP_ADDR user=recall dbname=recall_dev sslmode=disable
+   open: host=$POSTGRES_PORT_5432_TCP_ADDR user=$POSTGRES_USER password=$POSTGRES_PASSWORD dbname=recall_dev sslmode=disable
 
 test:
    driver: postgres
-   open: host=$POSTGRES_PORT_5432_TCP_ADDR user=recall dbname=recall_test sslmode=disable
+   open: host=$POSTGRES_PORT_5432_TCP_ADDR user=$POSTGRES_USER password=$POSTGRES_PASSWORD dbname=recall_test sslmode=disable

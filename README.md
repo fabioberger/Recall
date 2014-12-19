@@ -15,7 +15,7 @@ Environment Variables to set:
 Database Setup:
 - In psql:
 ```
-CREATE USER recall;
+CREATE USER recall WITH PASSWORD 'testing' ENCRYPTED;
 CREATE DATABASE recall_dev;
 GRANT ALL PRIVILEGES ON DATABASE recall_dev TO recall;
 CREATE DATABASE recall_test;
