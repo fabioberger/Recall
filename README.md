@@ -9,8 +9,6 @@ Environment Variables to set:
 	GMAIL_ADDRESS
 - Postgres info
 	POSTGRES_PORT_5432_TCP_ADDR (localhost if local, already set if linked psql docker container, /var/run/postgresql on Ubuntu aws)
-	POSTGRES_USER
-	POSTGRES_PASSWORD
 
 Database Setup:
 - In psql:
@@ -23,19 +21,5 @@ GRANT ALL PRIVILEGES ON DATABASE recall_test TO recall;
 CREATE DATABASE recall_prod;
 GRANT ALL PRIVILEGES ON DATABASE recall_prod TO recall;
 ```
-- Edit pg_hba.conf:
-```psql -U postgres```
-```SHOW hba_file```
-```ctrl-d```
-```vi /var/lib/postgresql/data/pg_hba.conf```
-```host all "recall" 0.0.0.0/0 trust```
 
 - In recall docker: goose --env=development up
-
-Dependencies:
-- Negroni (go get github.com/codegangsta/negroni)
-- Go-data-parser (go get github.com/albrow/go-data-parser)
-- Sendgrid (go get github.com/sendgrid/sendgrid-go)
-- gorilla/mux (go get github.com/gorilla/mux)
-- Gorp (go get github.com/coopernurse/gorp)
-- Goose (go get bitbucket.org/liamstask/goose/cmd/goose)

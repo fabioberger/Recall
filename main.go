@@ -40,7 +40,6 @@ func main() {
 	reminders := controllers.Reminders{}
 	router.HandleFunc("/", reminders.GetAll).Methods("GET")
 	router.HandleFunc("/reminder", reminders.Create).Methods("POST")
-	router.HandleFunc("/check", reminders.Check).Methods("GET")
 
 	n.UseHandler(router)
 	n.Run(":4000")

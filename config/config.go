@@ -45,9 +45,10 @@ var Test config = config{
 }
 
 func Init() {
-	if os.Getenv("RECALL_PSQL_HOST") == "" {
-		msg := `The environment variable RECALL_PSQL_HOST is not set.
+	if os.Getenv("POSTGRES_PORT_5432_TCP_ADDR") == "" {
+		msg := `The environment variable POSTGRES_PORT_5432_TCP_ADDR is not set.
 		If you are on your own laptop, you should probably set it to localhost.
+		If you are inside a postgres linked docker container it should be set for you.
 		If you are on an ubuntu aws server, set it to /var/run/postgresql.`
 		panic(msg)
 	}
@@ -88,12 +89,6 @@ func ParseDatabaseYAML(env string) {
 	// parse the env variable and set it properly
 	if strings.Contains(envData.Open, "$POSTGRES_PORT_5432_TCP_ADDR") {
 		envData.Open = strings.Replace(envData.Open, "$POSTGRES_PORT_5432_TCP_ADDR", os.Getenv("POSTGRES_PORT_5432_TCP_ADDR"), -1)
-	}
-	if strings.Contains(envData.Open, "$POSTGRES_USER") {
-		envData.Open = strings.Replace(envData.Open, "$POSTGRES_USER", os.Getenv("POSTGRES_USER"), -1)
-	}
-	if strings.Contains(envData.Open, "$POSTGRES_PASSWORD") {
-		envData.Open = strings.Replace(envData.Open, "$POSTGRES_PASSWORD", os.Getenv("POSTGRES_PASSWORD"), -1)
 	}
 	fmt.Println("[database] Using psql paramaters:", envData.Open)
 

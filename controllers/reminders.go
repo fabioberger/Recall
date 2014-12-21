@@ -51,8 +51,7 @@ func (rs Reminders) GetAll(res http.ResponseWriter, req *http.Request) {
 }
 
 // Check looks for reminders to be sent and removes old reminders
-func (rs Reminders) Check(res http.ResponseWriter, req *http.Request) {
-	r := render.New(render.Options{})
+func (rs Reminders) Check() {
 	reminders := models.GetAllReminders()
 	for _, r := range reminders {
 		reminderSetAt := time.Unix(int64(r.Timestamp), 0)
@@ -70,7 +69,6 @@ func (rs Reminders) Check(res http.ResponseWriter, req *http.Request) {
 			checkErr(err, "Removing reminder failed")
 		}
 	}
-	r.JSON(res, 200, "Success")
 }
 
 // Send uses to Sendgrid API to send recall emails
