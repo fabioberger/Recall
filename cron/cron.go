@@ -9,6 +9,8 @@ import (
 func main() {
 	config.Init()
 	models.Init()
-	reminders := controllers.Reminders{}
-	reminders.Check()
+	reminders := controllers.Reminders{
+		Mock: false,
+	}
+	reminders.CheckAll()
 }

@@ -1,0 +1,23 @@
+<h1>Welcome {{.Name}}!</h1>
+<p>Notification Email: {{.Email}}</p>
+
+<div class="new-reminder">
+	<a href="/">
+		<button class="btn btn-success">New Reminder</button>
+	</a>
+</div>
+
+<div class="reminders">
+	<table class="table table-hover table-bordered">
+		<tr>
+					<th>Reminders</th>
+					<th>Created on</th>
+		</tr>
+		{{range $index, $reminder := .Reminders}}
+		<tr>
+			<td>{{$reminder.Reminder}}</td>
+			<td>{{$reminder.Date}}</td>
+		</tr>
+		{{end}}
+	</table>
+</div>

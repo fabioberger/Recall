@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -13,15 +12,16 @@ var DatabaseYAMLPath = os.Getenv("GOPATH") + "/src/github.com/fabioberger/recall
 
 var Env string = os.Getenv("GO_ENV")
 
+var Secret []byte
 var Host string
 var Port string
 var Database dbConfig
 
 type config struct {
-	Host         string
-	Port         string
-	AllowOrigins []string
-	Database     dbConfig
+	Host     string
+	Port     string
+	Database dbConfig
+	Secret   []byte
 }
 
 type dbConfig struct {
@@ -30,18 +30,21 @@ type dbConfig struct {
 }
 
 var Prod config = config{
-	Host: "", // TODO: Set this to our api domain
-	Port: "8080",
+	Host:   "", // TODO: Set this to our api domain
+	Port:   "8080",
+	Secret: []byte(os.Getenv("RECALL_PROD_SECRET")),
 }
 
 var Dev config = config{
-	Host: "localhost",
-	Port: "3000",
+	Host:   "localhost",
+	Port:   "3000",
+	Secret: []byte(os.Getenv("RECALL_DEV_SECRET")),
 }
 
 var Test config = config{
-	Host: "localhost",
-	Port: "4000",
+	Host:   "localhost",
+	Port:   "4000",
+	Secret: []byte(os.Getenv("RECALL_TEST_SECRET")),
 }
 
 func Init() {
@@ -69,6 +72,7 @@ func Init() {
 func Use(c config) {
 	Host = c.Host
 	Port = c.Port
+	Secret = c.Secret
 }
 
 func ParseDatabaseYAML(env string) {
@@ -90,7 +94,7 @@ func ParseDatabaseYAML(env string) {
 	if strings.Contains(envData.Open, "$POSTGRES_PORT_5432_TCP_ADDR") {
 		envData.Open = strings.Replace(envData.Open, "$POSTGRES_PORT_5432_TCP_ADDR", os.Getenv("POSTGRES_PORT_5432_TCP_ADDR"), -1)
 	}
-	fmt.Println("[database] Using psql paramaters:", envData.Open)
+	// fmt.Println("[database] Using psql paramaters:", envData.Open)
 
 	// Construct a dbConfig object from envData
 	Database = dbConfig{

@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"net/http"
 	"os"
 
 	"github.com/albrow/negroni-json-recovery"
@@ -11,6 +12,7 @@ import (
 	"github.com/fabioberger/recall/controllers"
 	"github.com/fabioberger/recall/models"
 
+	"github.com/goincremental/negroni-sessions"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 )
@@ -27,19 +29,34 @@ func main() {
 		os.Exit(0)
 	}
 
+	config.Init()
+	models.Init()
+
 	// Middleware
 	n := negroni.New(negroni.NewLogger())
+	s := negroni.NewStatic(http.Dir("public"))
+	n.Use(s)
 	n.Use(recovery.JSONRecovery(config.Env != "production"))
+	store := sessions.NewCookieStore([]byte(config.Secret))
+	n.Use(sessions.Sessions("recall_session", store))
 
 	// Routes
 	router := mux.NewRouter()
 
-	config.Init()
-	models.Init()
-
-	reminders := controllers.Reminders{}
+	reminders := controllers.Reminders{
+		Mock: false,
+	}
 	router.HandleFunc("/", reminders.GetAll).Methods("GET")
 	router.HandleFunc("/reminder", reminders.Create).Methods("POST")
+
+	users := controllers.Users{}
+	router.HandleFunc("/login", users.Login).Methods("GET")
+	sess := controllers.Sessions{}
+	router.HandleFunc("/login", sess.Create).Methods("POST")
+	router.HandleFunc("/login", sess.Delete).Methods("DELETE")
+	router.HandleFunc("/signup", users.Signup).Methods("GET")
+	router.HandleFunc("/signup", users.Create).Methods("POST")
+	router.HandleFunc("/profile", users.Profile).Methods("GET")
 
 	n.UseHandler(router)
 	n.Run(":4000")
