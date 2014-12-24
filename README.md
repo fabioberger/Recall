@@ -9,6 +9,10 @@ Environment Variables to set:
 	GMAIL_ADDRESS
 - Postgres info
 	POSTGRES_PORT_5432_TCP_ADDR (localhost if local, already set if linked psql docker container, /var/run/postgresql on Ubuntu aws)
+- Session Secrets (64 byte hex string):
+RECALL_PROD_SECRET
+RECALL_DEV_SECRET
+RECALL_TEST_SECRET
 
 Database Setup:
 - In psql:
