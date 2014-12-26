@@ -13,6 +13,7 @@ import (
 	"github.com/fabioberger/recall/models"
 
 	"github.com/goincremental/negroni-sessions"
+	"github.com/goincremental/negroni-sessions/cookiestore"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 )
@@ -37,7 +38,7 @@ func main() {
 	s := negroni.NewStatic(http.Dir("public"))
 	n.Use(s)
 	n.Use(recovery.JSONRecovery(config.Env != "production"))
-	store := sessions.NewCookieStore([]byte(config.Secret))
+	store := cookiestore.New([]byte(config.Secret))
 	n.Use(sessions.Sessions("recall_session", store))
 
 	// Routes
