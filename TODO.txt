@@ -1,0 +1,6 @@
+Todo:
+
+- Set up external volume to Recall container for .bashrc file with environment vars
+
+- Remove Reminders
+- Edit Notification Email
