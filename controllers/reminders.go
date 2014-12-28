@@ -68,11 +68,13 @@ func (rs Reminders) GetAll(res http.ResponseWriter, req *http.Request) {
 	r.HTML(res, 200, "home", reminders)
 }
 
-func (rs Reminders) CheckAll() {
+func (rs Reminders) CheckAll() string {
 	reminders := models.GetAllReminders()
+	messages := ""
 	for _, r := range reminders {
-		rs.Check(r)
+		messages = rs.Check(r) + ", " + messages
 	}
+	return messages
 }
 
 // Check looks for reminders to be sent and removes old reminders
