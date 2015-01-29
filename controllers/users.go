@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 
 	"code.google.com/p/go.crypto/bcrypt"
@@ -27,8 +26,6 @@ func (u Users) Profile(res http.ResponseWriter, req *http.Request) {
 		r.HTML(res, 200, "login", "Please Login")
 		return
 	}
-	fmt.Println("HERE!")
-	fmt.Println("userid: ", user.Id)
 	reminders := models.GetReminders(int32(user.Id))
 	readableReminders := models.MakeReadableReminders(reminders)
 
@@ -42,6 +39,7 @@ func (u Users) Profile(res http.ResponseWriter, req *http.Request) {
 		Reminders: readableReminders,
 	}
 
+	// Switch out with Humble
 	r.HTML(res, 200, "profile", profile)
 }
 

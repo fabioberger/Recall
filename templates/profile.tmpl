@@ -12,11 +12,13 @@
 		<tr>
 					<th>Reminders</th>
 					<th>Created on</th>
+					<th>Remove</th>
 		</tr>
 		{{range $index, $reminder := .Reminders}}
 		<tr>
 			<td>{{$reminder.Reminder}}</td>
 			<td>{{$reminder.Date}}</td>
+			<td class="remove"><a href="#" onClick="removeReminder('{{$reminder.Id}}');" class="remove" >X</a></td>
 		</tr>
 		{{end}}
 	</table>

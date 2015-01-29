@@ -75,13 +75,9 @@ func (s Sessions) CreateFromCredentials(session sessions.Session, email string, 
 }
 
 func (s Sessions) Delete(res http.ResponseWriter, req *http.Request) {
-	r := render.New(render.Options{
-		Layout: "layout",
-	})
 	session := sessions.GetSession(req)
 	session.Delete(AuthenticationKey)
 	s.SetLoggedInCookie(res, "false")
-	r.HTML(res, 200, "home", nil)
 }
 
 // authString consists of email and password separated by a colon

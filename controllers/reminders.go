@@ -1,9 +1,11 @@
 package controllers
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/albrow/go-data-parser"
@@ -40,7 +42,7 @@ func (rs Reminders) Create(res http.ResponseWriter, req *http.Request) {
 	}
 
 	reminderData, err := data.Parse(req)
-	checkErr(err, "POST data parse error")
+	checkErr(err, "Reminder POST data parse error")
 
 	val := reminderData.Validator()
 	val.Require("reminder")
@@ -58,6 +60,28 @@ func (rs Reminders) Create(res http.ResponseWriter, req *http.Request) {
 	http.Redirect(res, req, "/profile", 301)
 }
 
+func (rs Reminders) Delete(res http.ResponseWriter, req *http.Request) {
+	reminderData, err := data.Parse(req)
+	checkErr(err, "Reminder DELETE data parse error")
+
+	val := reminderData.Validator()
+	val.Require("id")
+	val.LengthRange("id", 1, 13)
+
+	strId := reminderData.Get("id")
+	id, err := strconv.Atoi(strId)
+	if err != nil {
+		fmt.Printf("%q Is not a number.\n", strId)
+		return
+	}
+
+	err = models.RemoveById(id)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+}
+
 // GetAll returns all existing reminders and new reminder form
 func (rs Reminders) GetAll(res http.ResponseWriter, req *http.Request) {
 	r := render.New(render.Options{
@@ -72,7 +96,8 @@ func (rs Reminders) CheckAll() string {
 	reminders := models.GetAllReminders()
 	messages := ""
 	for _, r := range reminders {
-		messages = rs.Check(r) + ", " + messages
+		newMsg := rs.Check(r)
+		messages = newMsg + ", " + messages
 	}
 	return messages
 }

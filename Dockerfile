@@ -15,7 +15,7 @@ RUN apt-get install -y cron
 RUN mkdir -p /home/logs/; touch /home/logs/backup.log
 
 # Create crontab entry for checking reminders
-RUN echo "0 * * * * go run /go/src/app/cron/cron.go > /home/logs/backup.log 2>&1" >> /home/mycron
+RUN echo "0 * * * * /usr/src/go/bin/go run /go/src/app/cron/cron.go >> /home/logs/backup.log 2>&1" >> /home/mycron
 RUN crontab /home/mycron
 RUN rm /home/mycron
 

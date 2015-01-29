@@ -1,6 +1,8 @@
 Todo:
 
-- Set up external volume to Recall container for .bashrc file with environment vars
-
-- Remove Reminders
-- Edit Notification Email
+- Get Crons to run successfully on remote server
+- Edit Notification Email (Put in body)
+- Increase space size of reminder text and make it a textarea field
+- Add error reporting to profile page. If error removing reminder, let the user know
+Clean up error reporting for Reminders.Delete
+- Escape both SQL queries in Reminder model (funcs: RemoveById, GetReminders)

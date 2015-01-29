@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"strconv"
 	"time"
 )
@@ -16,6 +15,7 @@ type Reminder struct {
 type ReadableReminder struct {
 	Reminder string
 	Date     string
+	Id       int
 }
 
 func (r *Reminder) Save() error {
@@ -38,10 +38,18 @@ func (r *Reminder) Remove() error {
 	return nil
 }
 
+func RemoveById(id int) error {
+	query := "DELETE FROM reminders WHERE id= '" + strconv.Itoa(id) + "'"
+	_, err := Db.Exec(query)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func GetReminders(userid int32) []Reminder {
 	var reminders []Reminder
 	query := "select * from reminders where userid = '" + strconv.Itoa(int(userid)) + "'"
-	fmt.Println(query)
 	_, err := Db.Select(&reminders, query)
 	if err != nil {
 		panic(err)
@@ -66,6 +74,7 @@ func MakeReadableReminders(reminders []Reminder) []ReadableReminder {
 		r := ReadableReminder{
 			Reminder: reminder.Reminder,
 			Date:     readableDate,
+			Id:       reminder.Id,
 		}
 		readableReminders = append(readableReminders, r)
 	}

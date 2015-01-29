@@ -49,6 +49,7 @@ func main() {
 	}
 	router.HandleFunc("/", reminders.GetAll).Methods("GET")
 	router.HandleFunc("/reminder", reminders.Create).Methods("POST")
+	router.HandleFunc("/reminder", reminders.Delete).Methods("DELETE")
 
 	users := controllers.Users{}
 	router.HandleFunc("/login", users.Login).Methods("GET")

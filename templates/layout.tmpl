@@ -30,6 +30,14 @@
     	.new-reminder {
     		padding-top:15px;
     	}
+
+    	a.remove {
+    		color: red;
+    	}
+
+    	td.remove {
+    		text-align: center;
+    	}
     </style>
   </head>
 
@@ -91,6 +99,16 @@
 			}
 		}
 		return cName;
+	}
+
+	function removeReminder(id) {
+		$.ajax({
+	    type: "DELETE",
+	    url: "/reminder"  + '?' + $.param({"id": id}),
+	    success: function(){
+	       window.location = "/profile"
+	    }
+		});
 	}
 
   if (getCookie("isLoggedIn") == "true") {

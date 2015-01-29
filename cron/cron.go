@@ -15,5 +15,5 @@ func main() {
 		Mock: false,
 	}
 	log_messages := reminders.CheckAll()
-	fmt.Println(log_messages)
+	fmt.Println("Log msg: ", log_messages)
 }

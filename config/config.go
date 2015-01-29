@@ -51,7 +51,6 @@ func Init() {
 	if os.Getenv("POSTGRES_PORT_5432_TCP_ADDR") == "" {
 		msg := `The environment variable POSTGRES_PORT_5432_TCP_ADDR is not set.
 		If you are on your own laptop, you should probably set it to localhost.
-		If you are inside a postgres linked docker container it should be set for you.
 		If you are on an ubuntu aws server, set it to /var/run/postgresql.`
 		panic(msg)
 	}
