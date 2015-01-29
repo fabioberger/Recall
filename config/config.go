@@ -31,7 +31,7 @@ type dbConfig struct {
 
 var Prod config = config{
 	Host:   "", // TODO: Set this to our api domain
-	Port:   "8080",
+	Port:   "80",
 	Secret: []byte(os.Getenv("RECALL_PROD_SECRET")),
 }
 
