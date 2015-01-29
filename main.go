@@ -61,5 +61,5 @@ func main() {
 	router.HandleFunc("/profile", users.Profile).Methods("GET")
 
 	n.UseHandler(router)
-	n.Run(":4000")
+	n.Run(":" + config.Port)
 }
