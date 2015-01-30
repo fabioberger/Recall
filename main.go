@@ -11,6 +11,7 @@ import (
 	"github.com/fabioberger/recall/config"
 	"github.com/fabioberger/recall/controllers"
 	"github.com/fabioberger/recall/models"
+	"github.com/martini-contrib/cors"
 
 	"github.com/goincremental/negroni-sessions"
 	"github.com/goincremental/negroni-sessions/cookiestore"
@@ -37,6 +38,13 @@ func main() {
 	n := negroni.New(negroni.NewLogger())
 	s := negroni.NewStatic(http.Dir("public"))
 	n.Use(s)
+	n.UseHandler(cors.Allow(&cors.Options{
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"GET", "POST", "DELETE", "PUT", "PATCH"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "X-Requested-With"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+	}))
 	n.Use(recovery.JSONRecovery(config.Env != "production"))
 	store := cookiestore.New([]byte(config.Secret))
 	n.Use(sessions.Sessions("recall_session", store))
@@ -47,18 +55,16 @@ func main() {
 	reminders := controllers.Reminders{
 		Mock: false,
 	}
-	router.HandleFunc("/", reminders.GetAll).Methods("GET")
-	router.HandleFunc("/reminder", reminders.Create).Methods("POST")
-	router.HandleFunc("/reminder", reminders.Delete).Methods("DELETE")
 
 	users := controllers.Users{}
-	router.HandleFunc("/login", users.Login).Methods("GET")
 	sess := controllers.Sessions{}
-	router.HandleFunc("/login", sess.Create).Methods("POST")
-	router.HandleFunc("/login", sess.Delete).Methods("DELETE")
-	router.HandleFunc("/signup", users.Signup).Methods("GET")
-	router.HandleFunc("/signup", users.Create).Methods("POST")
-	router.HandleFunc("/profile", users.Profile).Methods("GET")
+	router.HandleFunc("/users", users.Create).Methods("POST")
+	router.HandleFunc("/users/{user_id}", users.GetOne).Methods("GET")
+	router.HandleFunc("/sessions", sess.Create).Methods("POST")
+	router.HandleFunc("/sessions/{session_id}", sess.Delete).Methods("DELETE")
+	router.HandleFunc("/reminders", reminders.GetAllForCurrentUser).Methods("GET")
+	router.HandleFunc("/reminders", reminders.Create).Methods("POST")
+	router.HandleFunc("/reminders/{reminder_id}", reminders.Delete).Methods("DELETE")
 
 	n.UseHandler(router)
 	n.Run(":" + config.Port)

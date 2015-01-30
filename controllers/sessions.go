@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -18,9 +17,19 @@ const AuthenticationKey = "recallAuth"
 
 type Sessions struct{}
 
+type RequestError struct {
+	Error string
+}
+
+func NewRequestError(msg string) *RequestError {
+	e := new(RequestError)
+	e.Error = msg
+	return e
+}
+
 func (s Sessions) Create(res http.ResponseWriter, req *http.Request) {
 	r := render.New(render.Options{
-		Layout: "layout",
+		IndentJSON: true,
 	})
 	session := sessions.GetSession(req)
 	sessionData, err := data.Parse(req)
@@ -30,34 +39,45 @@ func (s Sessions) Create(res http.ResponseWriter, req *http.Request) {
 
 	// Validations
 	val := sessionData.Validator()
-	val.Require("email")
-	val.Require("password")
+	val.Require("Email")
+	val.MatchEmail("Email")
+	val.Require("Password")
 	if val.HasErrors() {
-		r.HTML(res, 200, "login", val.Messages())
+		sessErr := NewRequestError(strings.Join(val.Messages(), " "))
+		r.JSON(res, http.StatusOK, sessErr)
 		return
 	}
 
 	// Get user from DB
-	email := sessionData.Get("email")
+	email := sessionData.Get("Email")
 	user, err := models.FindUserByEmail(email)
 	if err != nil {
 		panic(err)
 	} else if user == nil {
-		r.HTML(res, 200, "login", "email and/or password incorrect")
+		sessErr := NewRequestError("email and/or password is incorrect")
+		r.JSON(res, http.StatusOK, sessErr)
 		return
 	}
 
 	// Make sure password matches
-	password := sessionData.Get("password")
+	password := sessionData.Get("Password")
 	if err := bcrypt.CompareHashAndPassword([]byte(user.HashedPassword), []byte(password)); err != nil {
-		r.HTML(res, 200, "login", "email and/or password was incorrect.")
+		sessErr := NewRequestError("email and/or password is incorrect")
+		r.JSON(res, http.StatusOK, sessErr)
 		return
 	}
-
-	s.CreateFromCredentials(session, email, password, sessionData.GetBool("rememberMe"))
+	rememberMe := sessionData.GetBool("rememberMe")
+	s.CreateFromCredentials(session, email, password, rememberMe)
 	s.SetLoggedInCookie(res, "true")
 
-	http.Redirect(res, req, "/profile", 301)
+	frontendSession := struct {
+		Email      string
+		RememberMe bool
+	}{
+		Email:      email,
+		RememberMe: rememberMe,
+	}
+	r.JSON(res, http.StatusOK, frontendSession)
 }
 
 func (s Sessions) CreateFromCredentials(session sessions.Session, email string, password string, rememberMe bool) {
@@ -97,9 +117,8 @@ func getCurrentUser(req *http.Request) (*models.User, error) {
 	// Parse session data
 	session := sessions.GetSession(req)
 	s := session.Get(AuthenticationKey)
-	fmt.Println(s)
 	if s == nil {
-		return nil, nil
+		return nil, errors.New("You are currently not logged in.")
 	}
 	authString, ok := s.(string)
 	if !ok {

@@ -6,10 +6,12 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/albrow/go-data-parser"
 	"github.com/fabioberger/recall/models"
+	"github.com/gorilla/mux"
 	"github.com/sendgrid/sendgrid-go"
 	"github.com/unrolled/render"
 )
@@ -27,17 +29,19 @@ func checkErr(err error, msg string) {
 // CreateReminder takes a reminder form submission and saves it to the DB
 func (rs Reminders) Create(res http.ResponseWriter, req *http.Request) {
 	r := render.New(render.Options{
-		Layout: "layout",
+		IndentJSON: true,
 	})
 
 	// Check user is loggedin
 	user, err := getCurrentUser(req)
 	if err != nil {
-		r.HTML(res, 200, "login", err)
+		e := NewRequestError(err.Error())
+		r.JSON(res, http.StatusOK, e)
 		return
 	}
 	if user == nil {
-		r.HTML(res, 200, "login", "Please Login/Signup to create a reminder")
+		e := NewRequestError("Please Login/Signup to create a reminder")
+		r.JSON(res, http.StatusOK, e)
 		return
 	}
 
@@ -45,11 +49,16 @@ func (rs Reminders) Create(res http.ResponseWriter, req *http.Request) {
 	checkErr(err, "Reminder POST data parse error")
 
 	val := reminderData.Validator()
-	val.Require("reminder")
-	val.LengthRange("reminder", 3, 100)
+	val.Require("Reminder")
+	val.LengthRange("Reminder", 3, 100)
+	if val.HasErrors() {
+		e := NewRequestError(strings.Join(val.Messages(), " "))
+		r.JSON(res, http.StatusOK, e)
+		return
+	}
 
 	reminder := &models.Reminder{
-		Reminder:  reminderData.Get("reminder"),
+		Reminder:  reminderData.Get("Reminder"),
 		Timestamp: int32(time.Now().Unix()),
 		Userid:    int32(user.Id),
 	}
@@ -57,39 +66,41 @@ func (rs Reminders) Create(res http.ResponseWriter, req *http.Request) {
 	err = reminder.Save()
 	checkErr(err, "Inserting reminder failed")
 
-	http.Redirect(res, req, "/profile", 301)
+	r.JSON(res, http.StatusOK, reminder)
 }
 
 func (rs Reminders) Delete(res http.ResponseWriter, req *http.Request) {
-	reminderData, err := data.Parse(req)
-	checkErr(err, "Reminder DELETE data parse error")
 
-	val := reminderData.Validator()
-	val.Require("id")
-	val.LengthRange("id", 1, 13)
-
-	strId := reminderData.Get("id")
-	id, err := strconv.Atoi(strId)
+	vars := mux.Vars(req)
+	id, err := strconv.Atoi(vars["reminder_id"])
 	if err != nil {
-		fmt.Printf("%q Is not a number.\n", strId)
+		fmt.Printf("%v Is not a number.\n", id)
 		return
 	}
 
 	err = models.RemoveById(id)
 	if err != nil {
 		fmt.Println(err)
-		return
 	}
 }
 
-// GetAll returns all existing reminders and new reminder form
-func (rs Reminders) GetAll(res http.ResponseWriter, req *http.Request) {
+func (rs Reminders) GetAllForCurrentUser(res http.ResponseWriter, req *http.Request) {
 	r := render.New(render.Options{
-		Layout: "layout",
+		IndentJSON: true,
 	})
-	reminders := models.GetAllReminders()
 
-	r.HTML(res, 200, "home", reminders)
+	user, err := getCurrentUser(req)
+	if err != nil {
+		// Is there a more suscinct way to create list of error returns?
+		e := NewRequestError("You must be logged in to see reminders")
+		eList := []*RequestError{}
+		eList = append(eList, e)
+		r.JSON(res, http.StatusOK, eList)
+		return
+	}
+
+	reminders := models.GetReminders(int32(user.Id))
+	r.JSON(res, http.StatusOK, reminders)
 }
 
 func (rs Reminders) CheckAll() string {

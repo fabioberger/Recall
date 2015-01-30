@@ -1,9 +1,6 @@
 package models
 
-import (
-	"strconv"
-	"time"
-)
+import "strconv"
 
 type Reminder struct {
 	Id        int    `db:"id"`
@@ -64,19 +61,4 @@ func GetAllReminders() []Reminder {
 		panic(err)
 	}
 	return reminders
-}
-
-func MakeReadableReminders(reminders []Reminder) []ReadableReminder {
-	readableReminders := []ReadableReminder{}
-	for _, reminder := range reminders {
-		year, month, day := time.Unix(int64(reminder.Timestamp), 0).Date()
-		readableDate := strconv.Itoa(day) + " " + month.String() + ", " + strconv.Itoa(year)
-		r := ReadableReminder{
-			Reminder: reminder.Reminder,
-			Date:     readableDate,
-			Id:       reminder.Id,
-		}
-		readableReminders = append(readableReminders, r)
-	}
-	return readableReminders
 }

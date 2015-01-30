@@ -31,13 +31,13 @@ type dbConfig struct {
 
 var Prod config = config{
 	Host:   "", // TODO: Set this to our api domain
-	Port:   "80",
+	Port:   "3000",
 	Secret: []byte(os.Getenv("RECALL_PROD_SECRET")),
 }
 
 var Dev config = config{
 	Host:   "localhost",
-	Port:   "3000",
+	Port:   "8080",
 	Secret: []byte(os.Getenv("RECALL_DEV_SECRET")),
 }
 
