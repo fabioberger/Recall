@@ -79,7 +79,7 @@ func (u Users) Create(res http.ResponseWriter, req *http.Request) {
 		panic(err)
 	}
 
-	// Create and save the user
+	// Create and save user
 	user := &models.User{
 		Name:           name,
 		Email:          email,
