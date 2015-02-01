@@ -36,7 +36,8 @@ func main() {
 
 	// Middleware
 	n := negroni.New(negroni.NewLogger())
-	s := negroni.NewStatic(http.Dir("public"))
+	frontend_path := os.Getenv("GOPATH") + "/src/github.com/fabioberger/recall-frontend"
+	s := negroni.NewStatic(http.Dir(frontend_path))
 	n.Use(s)
 	n.UseHandler(cors.Allow(&cors.Options{
 		AllowOrigins:     []string{"*"},
